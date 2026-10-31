@@ -39,8 +39,8 @@ El agente no da precios salvo los orientativos del cambio de aceite y del servic
 1. Importar `Base del taller - Clase 1.csv` a Google Sheets y anotar el ID del documento y el GID de la hoja.
 2. En n8n: **Workflows → Import from file** y elegir el `.json`.
 3. Crear y asignar las credenciales de OpenAI, Google Sheets (OAuth2) y Gmail (OAuth2).
-4. Reemplazar los placeholders: `REEMPLAZAR_DOC_ID_BASE_TALLER`, `REEMPLAZAR_GID_HOJA` y `REEMPLAZAR_EMAIL_SUPERVISOR@ejemplo.com`.
-5. Probar con el chat de n8n y revisar el Execution Log.
+
+4. Probar con el chat de n8n y revisar el Execution Log.
 
 Versión de n8n usada: 2.45.6 (self-hosted, Docker).
 
