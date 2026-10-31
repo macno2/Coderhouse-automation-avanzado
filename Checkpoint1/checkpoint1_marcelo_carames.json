@@ -1,0 +1,316 @@
+{
+  "name": "checkpoint1_marcelo_carames",
+  "nodes": [
+    {
+      "id": "5dfba1d3-17b2-5bee-bf29-242e322c62be",
+      "name": "Chat Trigger (consulta del cliente)",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        0
+      ],
+      "parameters": {
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "webhookId": "815d93ab-04e3-514f-ab79-73261e2a735a"
+    },
+    {
+      "id": "ab7a9417-b94e-5bb3-8106-a4a71344df4f",
+      "name": "AI Agent (Tools Agent)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        100,
+        0
+      ],
+      "parameters": {
+        "options": {
+          "systemMessage": "## ROL Y ÁMBITO\nSos el Asesor Técnico de un taller de motos. Atendés consultas de clientes que escriben en lenguaje natural sobre su moto: mantenimiento, fallas, precios estándar y datos del servicio del taller (horarios, demoras, formas de pago, garantía y reclamos).\nNO tenés autorización para:\n- Dar precios, salvo los orientativos de TAL-20 (cambio de aceite y filtro) y TAL-21 (service de 10.000 km). Aun en esos casos aclará siempre que el precio es orientativo y se confirma al recibir la moto.\n- Confirmar garantías: si aplica o no lo evalúa el taller.\n- Autorizar a circular con fallas de frenos o con pérdidas de aceite o líquido.\n- Agendar turnos, ni prometer reembolsos, descuentos o plazos.\n- Enunciar una regla, un intervalo, un precio o un dato del taller que no hayas leído con tu herramienta.\n- Atender temas ajenos al taller de motos: respondé que eso está fuera de tu ámbito.\nEstilo: escribí en español rioplatense, con voseo, claro y breve. No uses lenguaje inclusivo en ninguna de sus formas (ni desdoblamientos, ni arroba, ni la letra x o e como marca de género): usá las formas gramaticales tradicionales y formulaciones neutras.\n\n## OBJETIVO OPERATIVO\nClasificar cada consulta, consultar la base técnica del taller y cerrar con UNA de tres decisiones:\n- RESUELTO: la base tiene la respuesta. Respondé con la regla de la fila y citá el artículo.\n- FALTA UN DATO: no alcanza con lo que dijo el cliente. Pedí SOLO lo que figura en la columna Datos_necesarios de la fila, o el síntoma y el modelo si el mensaje es demasiado vago.\n- DERIVADO AL TALLER: lo tiene que resolver una persona.\nFORMATO DE RESPUESTA (obligatorio): la primera línea es siempre este registro, completando los cuatro campos (usá n/d si un campo no aplica):\n[REGISTRO: DECISION=<RESUELTO|FALTA UN DATO|DERIVADO AL TALLER> | MOTO=<moto o modelo> | CATEGORIA=<categoría consultada> | ARTICULO=<código TAL-xx>]\nDespués de una línea en blanco va la respuesta para el cliente. El flujo lee esa primera línea para el reporte de supervisión y se la quita al cliente, así que no la omitas ni cambies su formato.\n\n## REGLAS DE USO DE HERRAMIENTAS\n1. SIEMPRE llamá a consultar_base_tecnica antes de decidir. Nunca respondas de memoria sobre intervalos, precios, políticas o procedimientos. Única excepción: si el mensaje es tan vago que no podés ubicarlo en ninguna categoría (por ejemplo \"No me anda\"), no adivines: respondé FALTA UN DATO pidiendo el síntoma y el modelo, sin consultar.\n2. El parámetro categoria tiene que ser exactamente uno de estos cuatro valores: mantenimiento, falla_tecnica, presupuesto, servicio_taller.\n   - Preguntas de precio (\"cuánto sale\") van a presupuesto.\n   - Preguntas sobre qué incluye un trabajo o cada cuánto hacerlo van a mantenimiento.\n   - Síntomas o fallas de la moto van a falla_tecnica.\n   - Horarios, turnos, demoras, pagos, garantía y reclamos van a servicio_taller.\n   Si la consulta toca dos temas, hacé una búsqueda por cada categoría.\n3. La herramienta devuelve todas las filas de la categoría. Elegí la fila cuyo Tema y Senales coinciden con lo que dijo el cliente, y seguí su Decision y su Respuesta_o_regla.\n4. Si la fila es RESUELTO, respondé con la regla aunque falten datos complementarios; podés pedirlos al final, pero no frenes la respuesta. Si la regla de la fila indica derivar en una condición que el cliente ya cumple, la decisión es DERIVADO AL TALLER.\n5. Para un precio de TAL-20 o TAL-21 necesitás la cilindrada. Si el cliente no la dijo y no la podés deducir de su mensaje, es FALTA UN DATO.\n6. Citá siempre el código del artículo entre paréntesis, por ejemplo (TAL-08).\n7. Si después de dos búsquedas ninguna fila responde la consulta, derivá. No inventes la respuesta.\n\n## PROTOCOLO DE ESCALAMIENTO\nRespondé DERIVADO AL TALLER cuando la fila lo indique (presupuestos no estándar, repuestos, accesorios, service mayor, frenos, pérdidas, recalentamiento, garantías, turnos y reclamos), cuando la base no cubra la consulta, o cuando el cliente insista en que le des un precio, una garantía o un reembolso que no corresponde.\n- Si es una falla de frenos o una pérdida de líquido, indicá primero que no circule con la moto hasta que la revise el taller.\n- No prometas reembolsos, descuentos, plazos ni turnos confirmados. Pedí los Datos_necesarios de la fila para que el taller tenga el caso completo.\n- La respuesta al cliente termina exactamente con la frase: Caso derivado al taller.",
+          "maxIterations": 6
+        }
+      }
+    },
+    {
+      "id": "f19e62ff-bb7c-547c-a984-f3cccf9dbeba",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        220
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5.4-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      }
+    },
+    {
+      "id": "af757cc5-523c-5720-ac63-2e34ac136ee3",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        160,
+        220
+      ],
+      "parameters": {
+        "contextWindowLength": 10
+      }
+    },
+    {
+      "id": "fa507734-c384-5d85-8210-6e53ca4b1078",
+      "name": "consultar_base_tecnica",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        220
+      ],
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Base de conocimiento oficial del taller de motos. Es la política del taller: para cada tipo de consulta indica qué responder, qué datos pedir al cliente y cuándo derivar a una persona. Contiene 26 artículos (códigos TAL-xx) en cuatro categorías.\n\nUSÁ ESTA HERRAMIENTA SIEMPRE antes de responder o decidir cualquier consulta sobre mantenimiento, fallas, precios o servicio del taller. No respondas de memoria ni enuncies reglas que no hayas leído acá.\n\nEl parámetro 'categoria' es OBLIGATORIO y tiene que ser exactamente uno de estos valores (minúscula, con guion bajo, sin acentos):\n- mantenimiento: qué incluye un trabajo y cada cuánto hacerlo. Ejemplos: cambio de aceite y filtro, qué incluye el service de 10.000 km, cadena y kit de arrastre, cubiertas y presión, moto guardada mucho tiempo.\n- falla_tecnica: síntomas y fallas de la moto. Ejemplos: no arranca y hace clic, batería que se descarga, testigo de inyección, se apaga sola, ruido raro, frenos, pérdida de aceite, recalentamiento, luces.\n- presupuesto: precios. Ejemplos: cuánto sale el cambio de aceite o el service de 10.000 km (únicos precios estándar, orientativos, según cilindrada), presupuesto de reparación, repuestos, accesorios.\n- servicio_taller: datos y trámites del taller. Ejemplos: horarios de atención, pedir turno, demoras de los trabajos, formas de pago, garantía, reclamos y reembolsos.\n\nCómo elegir la categoría: una pregunta de precio va siempre a presupuesto aunque nombre un trabajo de mantenimiento; una pregunta sobre qué incluye un trabajo o cada cuánto se hace va a mantenimiento.\n\nDevuelve todas las filas de esa categoría, con las columnas Articulo, Tema, Senales, Respuesta_o_regla, Decision (RESUELTO, FALTA UN DATO o DERIVADO AL TALLER) y Datos_necesarios. Elegí la fila cuyo Tema y Senales coinciden con la consulta. Si ninguna fila coincide, no inventes: derivá.\n\nNO la uses para consultar el estado de una moto en el taller, historiales de clientes ni turnos ya agendados: no hay datos de eso y corresponde derivar.",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_DOC_ID_BASE_TALLER"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_GID_HOJA"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Categoria",
+              "lookupValue": "={{ $fromAI('categoria', 'OBLIGATORIO. Exactamente uno de: mantenimiento, falla_tecnica, presupuesto, servicio_taller', 'string', 'sin_categoria') }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f3e5afbc-3ecd-59f3-b3b4-1d56d36e8591",
+      "name": "log_observabilidad",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        420,
+        0
+      ],
+      "parameters": {
+        "sendTo": "REEMPLAZAR_EMAIL_SUPERVISOR@ejemplo.com",
+        "subject": "={{ '[LOG] Taller de motos - ' + (($json.output.match(/DECISION=([^|\\]]+)/) || [])[1] || 'n/d').trim() }}",
+        "emailType": "text",
+        "message": "={{ 'Consulta del cliente: ' + $('Chat Trigger (consulta del cliente)').item.json.chatInput + '\\n\\nDecisión: ' + (($json.output.match(/DECISION=([^|\\]]+)/) || [])[1] || 'n/d').trim() + '\\nMoto/modelo: ' + (($json.output.match(/MOTO=([^|\\]]+)/) || [])[1] || 'n/d').trim() + '\\nCategoría: ' + (($json.output.match(/CATEGORIA=([^|\\]]+)/) || [])[1] || 'n/d').trim() + '\\nArtículo citado: ' + (($json.output.match(/ARTICULO=([^|\\]]+)/) || [])[1] || 'n/d').trim() + '\\n\\nRespuesta completa del agente:\\n' + $json.output + '\\n\\nSesión: ' + $('Chat Trigger (consulta del cliente)').item.json.sessionId }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "webhookId": "d71391ef-0004-57db-8bf5-99efb392477b"
+    },
+    {
+      "id": "0e2cc955-e698-5228-b2e1-6eeba18cee8e",
+      "name": "Respuesta al chat",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24fddb57-379a-55c1-8de1-90012bac8725",
+              "name": "output",
+              "value": "={{ $('AI Agent (Tools Agent)').item.json.output.replace(/^\\[REGISTRO:[^\\]]*\\]\\s*/, '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "e29f40e0-8776-5fc1-a81f-8a742900e407",
+      "name": "Nota del checkpoint",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -400
+      ],
+      "parameters": {
+        "content": "## Checkpoint 1 · Agente del taller de motos (M1)\n**Hito 1 del proyecto integrador.** En cada módulo se importa este `.json` y se extiende; no se rehace.\n\n**Flujo:** Chat Trigger → AI Agent (Tools Agent, Max Iterations 6, System Prompt de 4 bloques) con OpenAI, Simple Memory y la tool `consultar_base_tecnica` → Gmail `log_observabilidad` por `main` → Set que devuelve el texto al chat.\n\n**Antes de ejecutar, reemplazar:** `REEMPLAZAR_DOC_ID_BASE_TALLER` y `REEMPLAZAR_GID_HOJA` (tool de Google Sheets) y `REEMPLAZAR_EMAIL_SUPERVISOR@ejemplo.com` (Gmail). Asignar las credenciales de OpenAI, Google Sheets y Gmail.",
+        "width": 820,
+        "height": 300,
+        "color": 5
+      }
+    },
+    {
+      "id": "9874f5ca-5209-55bb-8577-e5030a786b23",
+      "name": "1 · Trigger",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        400
+      ],
+      "parameters": {
+        "content": "## 1 · El trigger\nEl cliente escribe en texto libre y sin estructura. `responseMode: lastNode`: el chat muestra la salida del último nodo, por eso existe *Respuesta al chat* al final.",
+        "width": 360,
+        "height": 180,
+        "color": 7
+      }
+    },
+    {
+      "id": "ff16bfbc-03bf-566d-a84b-8b79ae44007a",
+      "name": "2 · Cerebro",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        400
+      ],
+      "parameters": {
+        "content": "## 2 · El cerebro (ReAct)\n`maxIterations = 6` es el freno: cada vuelta es una llamada al modelo, o sea plata. Está en `parameters.options` del agente.\n\nSystem Prompt de 4 bloques: Rol y ámbito / Objetivo / Reglas de herramientas / Escalamiento. La primera línea de cada respuesta es un registro que el flujo usa para el log y le quita al cliente.",
+        "width": 420,
+        "height": 240,
+        "color": 4
+      }
+    },
+    {
+      "id": "8d0975b3-b8c4-5961-9769-c2a03053de8f",
+      "name": "3 · Manos",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        600,
+        400
+      ],
+      "parameters": {
+        "content": "## 3 · Las manos (tool)\nLa tool cuelga LATERALMENTE del agente (conexión `ai_tool`), nunca en fila después.\n\nLa description larga y el `$fromAI` con la lista cerrada de categorías evitan la instrucción huérfana.",
+        "width": 400,
+        "height": 200,
+        "color": 5
+      }
+    },
+    {
+      "id": "e919f64f-a8da-5f2e-a201-0580b5f0372d",
+      "name": "4 · Log",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        380,
+        -240
+      ],
+      "parameters": {
+        "content": "## 4 · El log de observabilidad\nNodo Gmail DESPUÉS del agente, por `main`. No es una tool: se ejecuta siempre, sin que el agente decida. Reporta decisión, moto/modelo, categoría y artículo citado.",
+        "width": 380,
+        "height": 180,
+        "color": 3
+      }
+    },
+    {
+      "id": "d78afe68-ecc6-513f-8f87-636f382f8028",
+      "name": "Bateria de prueba",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        640
+      ],
+      "parameters": {
+        "content": "## Batería de prueba (9 mensajes)\n1. «La batería de la Scrambler se descarga si la dejo 3 días.» → RESUELTO · falla_tecnica · TAL-08\n2. «¿Cada cuántos km le cambio el aceite a una Tornado?» → RESUELTO · mantenimiento · TAL-01\n3. «¿Cuánto sale el service de 10.000 km de una 250?» → RESUELTO · presupuesto · TAL-21 ($150.000 orientativo)\n4. «Hace un ruido raro.» → FALTA UN DATO · falla_tecnica · TAL-11\n5. «No me anda.» → FALTA UN DATO (pide síntoma y modelo)\n6. «Se apaga sola.» → FALTA UN DATO · falla_tecnica · TAL-10\n7. «El freno delantero se va a fondo.» → DERIVADO AL TALLER · falla_tecnica · TAL-12 (no circular)\n8. «La arreglaron la semana pasada y volvió a fallar, quiero que me devuelvan la plata.» → DERIVADO AL TALLER · servicio_taller · TAL-35 (y TAL-34)\n9. «¿Cuánto sale cambiar el kit de arrastre?» → DERIVADO AL TALLER · presupuesto · TAL-22\n\nEn cada ejecución, abrir en el Execution Log la tool: qué categoría recibió y cuántas vueltas dio el agente.",
+        "width": 820,
+        "height": 380,
+        "color": 7
+      }
+    }
+  ],
+  "connections": {
+    "Chat Trigger (consulta del cliente)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent (Tools Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent (Tools Agent)": {
+      "main": [
+        [
+          {
+            "node": "log_observabilidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log_observabilidad": {
+      "main": [
+        [
+          {
+            "node": "Respuesta al chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent (Tools Agent)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent (Tools Agent)",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_base_tecnica": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent (Tools Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

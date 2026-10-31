@@ -1,0 +1,9 @@
+Categoria,Limite_ARS,Requiere_Comprobante,Requiere_Aprobacion_Jefatura,Notas
+Comidas con cliente,60000,Si,No,Hasta 2 comensales. Con mas de 2 hay que detallar los asistentes.
+Comidas del equipo,25000,Si,No,Solo en dias con jornada extendida declarada.
+Traslados urbanos,18000,No,No,"Taxi, remis o app. No exige comprobante mientras no supere el limite."
+Pasajes aereos,400000,Si,Si,"Requiere aprobacion previa de jefatura, sin excepcion."
+Alojamiento,120000,Si,Si,Limite por noche. Requiere aprobacion si supera las 2 noches.
+Insumos de oficina,35000,Si,No,"Las compras recurrentes van por el area de Compras, no por rendicion."
+Capacitacion,250000,Si,Si,Requiere formulario de RRHH aprobado antes de la inscripcion.
+Representacion,90000,Si,Si,"Regalos institucionales, eventos y atenciones a proveedores."
