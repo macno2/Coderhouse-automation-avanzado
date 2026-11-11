@@ -93,16 +93,6 @@ Plan completo en `casos_de_prueba_checkpoint4.md`. Completar con el resultado de
 
 Falta repetir estas pruebas con correos reales en el Módulo 4: casos 2, 3 y 7 de `casos_de_prueba_checkpoint4.md`.
 
-## Capturas recomendadas (con zoom)
-
-Para que se verifiquen conexiones y condiciones, además de la vista completa del lienzo, hacer capturas ampliadas de cada zona:
-
-1. Entrada: `Gmail Trigger`, `1 IF: es auto-reply?` y `4 Set`.
-2. CRM: `2 Look up`, `IF: el cliente ya existe?`, `Update` y `Create`.
-3. Memoria: `Identificar cliente`, `Buscar ficha`, `¿Tiene ficha?`, `Crear ficha` y `Ficha`.
-4. Salida: `4b Set`, `3 Create Draft` y `Slack`.
-5. Escritura y resumen: `Actualizar ficha`, `¿Más de 5 mensajes?`, `Resumir`, `Guardar resumen`.
-6. El panel de condiciones abierto del IF anti auto-reply y del IF de más de 5 mensajes.
 
 ## Evidencia de conexiones y permisos
 
