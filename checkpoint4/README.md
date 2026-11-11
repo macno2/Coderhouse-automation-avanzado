@@ -14,7 +14,7 @@ El agente del taller (Módulo 3, con memoria) ahora **recibe los correos del tal
 
 > Captura de la sección **Credentials** de n8n con las 3 conexiones activas:
 >
-> ![Credentials de n8n](credentials.png)
+> Ver las capturas de las credenciales en el directorio
 
 ## Flujo
 
