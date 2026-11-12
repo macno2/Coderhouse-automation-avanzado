@@ -26,6 +26,8 @@ Capturas de las credenciales en n8n, con la conexión activa ("Account connected
 
 ![Credencial de Slack](SLACK%20CON%20CUSTOM%20SCOPE.png)
 
+![Credentials de n8n](Credentials.png)
+
 ## Flujo
 
 ```
