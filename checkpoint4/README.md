@@ -163,13 +163,3 @@ Las tablas del proyecto solo tienen datos de prueba. Si se comparte la base, con
 - `airtable_clientes_plantilla.csv` y `airtable_memoria_plantilla.csv`: encabezados para crear las dos tablas de Airtable.
 - Capturas de las credenciales y sus permisos: `Credenciales Airtable.png`, `GMAIL CON CUSTOM SCOPE.png`, `SLACK CON CUSTOM SCOPE.png` y `Credenciales Google sheets.png`.
 
-## Cómo importarlo
-
-1. Importar primero los dos Workers (**Workflows → Import from file**) y guardarlos.
-2. Importar `checkpoint4_marcelo_carames.json`.
-3. Crear la base de Airtable (sección anterior) y asignar las credenciales de **Gmail**, **Airtable**, **Slack** y **OpenAI** (y **Google Sheets** en el Worker 1). En el **Gmail Trigger**, ajustar el filtro de búsqueda a los remitentes de prueba propios; por defecto: `-from:me in:inbox`.
-4. En los dos nodos **Execute Workflow**, elegir el Worker que corresponde.
-5. En el nodo de Slack, elegir el canal del equipo técnico (`#equipo-tecnico`) y, en el Worker 1, reemplazar `REEMPLAZAR_DOC_ID_BASE_TALLER` y `REEMPLAZAR_GID_HOJA` por la base del taller.
-6. Probar con el plan de `casos_de_prueba_checkpoint4.md`.
-
-Versión de n8n usada: 2.45.6 (self-hosted, Docker).
